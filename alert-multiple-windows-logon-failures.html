@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wazuh — wazuh-alerts-4.x-2026.05.28#rj3bbp4B4Nf1o0JlonAw</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f8fc;
+    --border: #d3dae6;
+    --border2: #e9edf3;
+    --text: #343741;
+    --muted: #69707d;
+    --accent: #006bb8;
+    --accent-bg: #e6f0f8;
+    --tag-bg: #f0f4fb;
+    --hover: #f5f7fb;
+    --header-bg: #f7f8fc;
+    --wazuh-blue: #00a9e5;
+    --sidebar-bg: #1a1b1e;
+    --sidebar-text: #dfe5ef;
+    --topbar-bg: #231f20;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ── TOP NAV ── */
+  .topnav {
+    background: var(--topbar-bg);
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .wazuh-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .wazuh-logo svg { width: 28px; height: 28px; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: #aab4c8;
+  }
+
+  .breadcrumb .sep { color: #556070; margin: 0 2px; }
+  .breadcrumb .current { color: #7dd3fc; font-family: 'Roboto Mono', monospace; font-size: 11px; }
+
+  .topnav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+  .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #f97316;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    min-height: calc(100vh - 48px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 48px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid #2d2f35;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-icon {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 15px;
+  }
+  .sidebar-icon:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .sidebar-icon.active { background: #0284c7; color: #fff; }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    flex: 1;
+    overflow: auto;
+  }
+
+  /* ── SUB NAV (Discover bar) ── */
+  .discover-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .discover-bar a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0 4px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid transparent;
+  }
+  .discover-bar a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── DOC HEADER ── */
+  .doc-header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .doc-header h1 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .doc-header .doc-id {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── TABLE VIEW ── */
+  .table-view {
+    padding: 0;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 18px 220px 1fr;
+    align-items: start;
+    border-bottom: 1px solid var(--border2);
+    min-height: 32px;
+    transition: background 0.1s;
+  }
+
+  .field-row:hover { background: var(--hover); }
+
+  .field-row:hover .field-actions { opacity: 1; }
+
+  .field-icon {
+    padding: 7px 4px 7px 12px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 9px;
+  }
+
+  .field-icon.type-t { color: #6366f1; }
+  .field-icon.type-n { color: #f59e0b; }
+  .field-icon.type-d { color: #10b981; }
+  .field-icon.type-b { color: #ef4444; }
+  .field-icon.type-w { color: #ef4444; }
+
+  .field-name {
+    padding: 7px 12px 7px 8px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 500;
+    word-break: break-all;
+    cursor: pointer;
+  }
+
+  .field-name:hover { color: var(--accent); text-decoration: underline; }
+
+  .field-value {
+    padding: 7px 24px 7px 0;
+    color: var(--text);
+    font-size: 13px;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  .field-value.mono {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 11.5px;
+  }
+
+  .field-value a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .field-value a:hover { text-decoration: underline; }
+
+  /* tag chips */
+  .chip {
+    display: inline-block;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 7px;
+    font-size: 11.5px;
+    color: var(--accent);
+    margin: 1px 2px 1px 0;
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .section-divider {
+    height: 8px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    border-top: 1px solid var(--border2);
+  }
+
+  /* ── JSON VIEW ── */
+  .json-view {
+    display: none;
+    padding: 20px 24px;
+    background: #1e1e2e;
+    min-height: 400px;
+  }
+
+  .json-view pre {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #cdd6f4;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .jk { color: #89b4fa; }  /* key */
+  .js { color: #a6e3a1; }  /* string */
+  .jn { color: #fab387; }  /* number */
+  .jb { color: #f38ba8; }  /* bool */
+
+  /* active tab switching */
+  .tab[data-tab="json"].active ~ * .table-view { display: none; }
+
+  /* ── NOTICE BANNER ── */
+  .notice-banner {
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+    padding: 8px 24px;
+    font-size: 12px;
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .field-row { grid-template-columns: 18px 160px 1fr; }
+    .sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="wazuh-logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="20" r="20" fill="#00a9e5"/>
+      <path d="M10 28L20 12L30 28H10Z" fill="#fff" opacity="0.9"/>
+    </svg>
+    W.
+  </div>
+  <div class="breadcrumb">
+    <span>Discover</span>
+    <span class="sep">/</span>
+    <span class="current">wazuh-alerts-4.x-2026.05.28#rj3bbp4B4Nf1o0JlonAw</span>
+  </div>
+  <div class="topnav-right">
+    <div class="avatar">a</div>
+    <span style="color:#aab4c8;font-size:18px;cursor:pointer;">?</span>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR ICONS -->
+  <div class="sidebar">
+    <div class="sidebar-icon" title="Home">⌂</div>
+    <div class="sidebar-icon active" title="Discover">◎</div>
+    <div class="sidebar-icon" title="Dashboard">▦</div>
+    <div class="sidebar-icon" title="Visualize">◈</div>
+    <div class="sidebar-icon" title="Management">⚙</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="content">
+
+    <div class="notice-banner">
+      ⚠ File ini adalah referensi data alert untuk keperluan analisa SOC. Baca seluruh field sebelum mengisi form analisa.
+    </div>
+
+    <!-- DISCOVER BAR -->
+    <div class="discover-bar">
+      <a href="#" class="active">Table</a>
+      <a href="#" id="jsonTab">JSON</a>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('table', this)">Table</div>
+      <div class="tab" onclick="switchTab('json', this)">JSON</div>
+    </div>
+
+    <!-- TABLE VIEW -->
+    <div class="table-view" id="tableView">
+
+      <!-- @timestamp -->
+      <div class="field-row">
+        <div class="field-icon type-d">📅</div>
+        <div class="field-name">@timestamp</div>
+        <div class="field-value">May 28, 2026 @ 20:51:42.285</div>
+      </div>
+
+      <!-- _index -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">_index</div>
+        <div class="field-value mono">wazuh-alerts-4.x-2026.05.28</div>
+      </div>
+
+      <!-- agent.id -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">agent.id</div>
+        <div class="field-value mono">002</div>
+      </div>
+
+      <!-- agent.ip -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">agent.ip</div>
+        <div class="field-value mono">172.20.10.6</div>
+      </div>
+
+      <!-- agent.name -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">agent.name</div>
+        <div class="field-value">windows-laptop</div>
+      </div>
+
+      <!-- data.win.eventdata fields -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.authenticationPackageName</div>
+        <div class="field-value">Negotiate</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.elevatedToken</div>
+        <div class="field-value mono">%%1842</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.impersonationLevel</div>
+        <div class="field-value mono">%%1833</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-n">⚠</div>
+        <div class="field-name">data.win.eventdata.keyLength</div>
+        <div class="field-value mono">0</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.logonGuid</div>
+        <div class="field-value mono">{00000000-0000-0000-0000-000000000000}</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.logonProcessName</div>
+        <div class="field-value">Advapi</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.logonType</div>
+        <div class="field-value mono">5</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.processId</div>
+        <div class="field-value mono">0x5a8</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.processName</div>
+        <div class="field-value mono">C:\\Windows\\System32\\services.exe</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.subjectDomainName</div>
+        <div class="field-value">WORKGROUP</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.subjectLogonId</div>
+        <div class="field-value mono">0x3e7</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.subjectUserName</div>
+        <div class="field-value">SHIN$</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.subjectUserSid</div>
+        <div class="field-value mono">S-1-5-18</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.targetDomainName</div>
+        <div class="field-value">NT AUTHORITY</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.targetLinkedLogonId</div>
+        <div class="field-value mono">0x0</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.targetLogonId</div>
+        <div class="field-value mono">0x3e7</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.targetUserName</div>
+        <div class="field-value">SYSTEM</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.targetUserSid</div>
+        <div class="field-value mono">S-1-5-18</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.eventdata.virtualAccount</div>
+        <div class="field-value mono">%%1843</div>
+      </div>
+
+      <!-- data.win.system fields -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.channel</div>
+        <div class="field-value">Security</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.computer</div>
+        <div class="field-value">shin</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.eventID</div>
+        <div class="field-value mono">4624</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.eventRecordID</div>
+        <div class="field-value mono">4308310</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.keywords</div>
+        <div class="field-value mono">0x8020000000000000</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.level</div>
+        <div class="field-value mono">0</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.message</div>
+        <div class="field-value" style="white-space:pre-wrap;font-size:12px;padding-top:8px;padding-bottom:8px;">"An account was successfully logged on.
+
+Subject:
+	Security ID:		S-1-5-18
+	Account Name:		SHIN$
+	Account Domain:		WORKGROUP
+	Logon ID:		0x3E7
+
+Logon Information:
+	Logon Type:		5
+	Restricted Admin Mode:	-
+	Remote Credential Guard:	-
+	Virtual Account:		No
+	Elevated Token:		Yes
+
+Impersonation Level:		Impersonation
+
+New Logon:
+	Security ID:		S-1-5-18
+	Account Name:		SYSTEM
+	Account Domain:		NT AUTHORITY
+	Logon ID:		0x3E7
+	Linked Logon ID:		0x0
+	Network Account Name:	-
+	Network Account Domain:	-
+	Logon GUID:		{00000000-0000-0000-0000-000000000000}
+
+Process Information:
+	Process ID:		0x5a8
+	Process Name:		C:\Windows\System32\services.exe
+
+Network Information:
+	Workstation Name:	-
+	Source Network Address:	-
+	Source Port:		-
+
+Detailed Authentication Information:
+	Logon Process:		Advapi
+	Authentication Package:	Negotiate
+	Transited Services:	-
+	Package Name (NTLM only):	-
+	Key Length:		0
+
+This event is generated when a logon session is created. It is generated on the computer that was accessed.
+
+The subject fields indicate the account on the local system which requested the logon. This is most commonly a service such as the Server service, or a local process such as Winlogon.exe or Services.exe.
+
+The logon type field indicates the kind of logon that occurred. The most common types are 2 (interactive) and 3 (network).
+
+The New Logon fields indicate the account for whom the new logon was created, i.e. the account that was logged on.
+
+The network fields indicate where a remote logon request originated. Workstation name is not always available and may be left blank in some cases.
+
+The impersonation level field indicates the extent to which a process in the logon session can impersonate.
+
+The authentication information fields provide detailed information about this specific logon request.
+	- Logon GUID is a unique identifier that can be used to correlate this event with a KDC event.
+	- Transited services indicate which intermediate services have participated in this logon request.
+	- Package name indicates which sub-protocol was used among the NTLM protocols.
+	- Key length indicates the length of the generated session key. This will be 0 if no session key was requested."</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.opcode</div>
+        <div class="field-value mono">0</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.processID</div>
+        <div class="field-value mono">1476</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.providerGuid</div>
+        <div class="field-value mono">{54849625-5478-4994-a5ba-3e3b0328c30d}</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.providerName</div>
+        <div class="field-value">Microsoft-Windows-Security-Auditing</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.severityValue</div>
+        <div class="field-value">AUDIT_SUCCESS</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.systemTime</div>
+        <div class="field-value mono">2026-05-28T13:50:55.3246545Z</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.task</div>
+        <div class="field-value mono">12544</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.threadID</div>
+        <div class="field-value mono">10756</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">data.win.system.version</div>
+        <div class="field-value mono">3</div>
+      </div>
+
+      <!-- decoder / full_log / id / input -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">decoder.name</div>
+        <div class="field-value">windows_eventchannel</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">full_log</div>
+        <div class="field-value mono" style="font-size:11px;word-break:break-all;">{"win":{"system":{"providerName":"Microsoft-Windows-Security-Auditing","providerGuid":"{54849625-5478-4994-a5ba-3e3b0328c30d}","eventID":"4624","version":"3","level":"0","task":"12544","opcode":"0","keywords":"0x8020000000000000","systemTime":"2026-05-28T13:50:55.3246545Z","eventRecordID":"4308310","processID":"1476","threadID":"10756","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"subjectUserSid":"S-1-5-18","subjectUserName":"SHIN$","subjectDomainName":"WORKGROUP","subjectLogonId":"0x3e7","targetUserSid":"S-1-5-18","targetUserName":"SYSTEM","targetDomainName":"NT AUTHORITY","targetLogonId":"0x3e7","logonType":"5","logonProcessName":"Advapi","authenticationPackageName":"Negotiate","logonGuid":"{00000000-0000-0000-0000-000000000000}","keyLength":"0","processId":"0x5a8","processName":"C:\\\\Windows\\\\System32\\\\services.exe","impersonationLevel":"%%1833","virtualAccount":"%%1843","targetLinkedLogonId":"0x0","elevatedToken":"%%1842"}}}</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">id</div>
+        <div class="field-value mono">1779976302.3306094</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">input.type</div>
+        <div class="field-value">log</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">location</div>
+        <div class="field-value">EventChannel</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">manager.name</div>
+        <div class="field-value">wazuh-server</div>
+      </div>
+
+      <!-- previous_output -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">previous_output</div>
+        <div class="field-value mono" style="font-size:11px;word-break:break-all;padding-top:8px;padding-bottom:8px;">{"win":{"system":{"providerName":"Microsoft-Windows-Security-Auditing","eventID":"4624","systemTime":"2026-05-28T13:50:36.5902845Z","eventRecordID":"4308238","processID":"1476","threadID":"5148","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"subjectUserName":"SHIN$","targetUserName":"SYSTEM","targetDomainName":"NT AUTHORITY","logonType":"5","logonProcessName":"Advapi","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"providerName":"Microsoft-Windows-Security-Auditing","eventID":"4624","systemTime":"2026-05-28T13:50:36.4965686Z","eventRecordID":"4308235","processID":"1476","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"subjectUserName":"SHIN$","targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:50:08.2681171Z","eventRecordID":"4308038","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:49:40.3142380Z","eventRecordID":"4307972","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:49:37.9140032Z","eventRecordID":"4307905","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:49:37.1928845Z","eventRecordID":"4307898","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:49:35.6961221Z","eventRecordID":"4307892","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:49:18.8137130Z","eventRecordID":"4307781","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}
+{"win":{"system":{"eventID":"4624","systemTime":"2026-05-28T13:49:10.2413160Z","eventRecordID":"4307727","channel":"Security","computer":"shin","severityValue":"AUDIT_SUCCESS"},"eventdata":{"targetUserName":"SYSTEM","logonType":"5","processName":"C:\\\\Windows\\\\System32\\\\services.exe"}}}</div>
+      </div>
+
+      <!-- rule fields -->
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.description</div>
+        <div class="field-value">Windows: Multiple successful logins detected on  — Possible lateral movement</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-n">#</div>
+        <div class="field-name">rule.firedtimes</div>
+        <div class="field-value mono">7</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-n">#</div>
+        <div class="field-name">rule.frequency</div>
+        <div class="field-value mono">10</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.groups</div>
+        <div class="field-value">
+          <span class="chip">windows</span>
+          <span class="chip">authentication_success</span>
+          <span class="chip">authentication_success</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.id</div>
+        <div class="field-value mono">100004</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-n">#</div>
+        <div class="field-name">rule.level</div>
+        <div class="field-value mono">8</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-b">b</div>
+        <div class="field-name">rule.mail</div>
+        <div class="field-value mono">false</div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.mitre.id</div>
+        <div class="field-value"><span class="chip">T1078.002</span></div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.mitre.tactic</div>
+        <div class="field-value">
+          <span class="chip">Defense Evasion</span>
+          <span class="chip">Persistence</span>
+          <span class="chip">Privilege Escalation</span>
+          <span class="chip">Initial Access</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.mitre.technique</div>
+        <div class="field-value"><span class="chip">Domain Accounts</span></div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon type-t">t</div>
+        <div class="field-name">rule.pci_dss</div>
+        <div class="field-value"><span class="chip">10.2.5</span></div>
+      </div>
+
+      <!-- timestamp -->
+      <div class="field-row">
+        <div class="field-icon type-d">📅</div>
+        <div class="field-name">timestamp</div>
+        <div class="field-value">May 28, 2026 @ 20:51:42.285</div>
+      </div>
+
+    </div><!-- /table-view -->
+
+    <!-- JSON VIEW -->
+    <div class="json-view" id="jsonView">
+      <pre id="jsonContent"></pre>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+  const alertData = {
+    "@timestamp": "2026-05-28T13:51:42.285Z",
+    "_index": "wazuh-alerts-4.x-2026.05.28",
+    "agent": { "id": "002", "ip": "172.20.10.6", "name": "windows-laptop" },
+    "data": {
+      "win": {
+        "eventdata": {
+          "authenticationPackageName": "Negotiate",
+          "elevatedToken": "%%1842",
+          "impersonationLevel": "%%1833",
+          "keyLength": "0",
+          "logonGuid": "{00000000-0000-0000-0000-000000000000}",
+          "logonProcessName": "Advapi",
+          "logonType": "5",
+          "processId": "0x5a8",
+          "processName": "C:\\\\Windows\\\\System32\\\\services.exe",
+          "subjectDomainName": "WORKGROUP",
+          "subjectLogonId": "0x3e7",
+          "subjectUserName": "SHIN$",
+          "subjectUserSid": "S-1-5-18",
+          "targetDomainName": "NT AUTHORITY",
+          "targetLinkedLogonId": "0x0",
+          "targetLogonId": "0x3e7",
+          "targetUserName": "SYSTEM",
+          "targetUserSid": "S-1-5-18",
+          "virtualAccount": "%%1843"
+        },
+        "system": {
+          "channel": "Security",
+          "computer": "shin",
+          "eventID": "4624",
+          "eventRecordID": "4308310",
+          "keywords": "0x8020000000000000",
+          "level": "0",
+          "opcode": "0",
+          "processID": "1476",
+          "providerGuid": "{54849625-5478-4994-a5ba-3e3b0328c30d}",
+          "providerName": "Microsoft-Windows-Security-Auditing",
+          "severityValue": "AUDIT_SUCCESS",
+          "systemTime": "2026-05-28T13:50:55.3246545Z",
+          "task": "12544",
+          "threadID": "10756",
+          "version": "3"
+        }
+      }
+    },
+    "decoder": { "name": "windows_eventchannel" },
+    "id": "1779976302.3306094",
+    "input": { "type": "log" },
+    "location": "EventChannel",
+    "manager": { "name": "wazuh-server" },
+    "rule": {
+      "description": "Windows: Multiple successful logins detected on  — Possible lateral movement",
+      "firedtimes": 7,
+      "frequency": 10,
+      "groups": ["windows", "authentication_success", "authentication_success"],
+      "id": "100004",
+      "level": 8,
+      "mail": false,
+      "mitre": {
+        "id": ["T1078.002"],
+        "tactic": ["Defense Evasion", "Persistence", "Privilege Escalation", "Initial Access"],
+        "technique": ["Domain Accounts"]
+      },
+      "pci_dss": ["10.2.5"]
+    },
+    "timestamp": "2026-05-28T13:51:42.285Z"
+  };
+
+  document.getElementById('jsonContent').textContent = JSON.stringify(alertData, null, 2);
+
+  function switchTab(tab, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    if (tab === 'table') {
+      document.getElementById('tableView').style.display = '';
+      document.getElementById('jsonView').style.display = 'none';
+    } else {
+      document.getElementById('tableView').style.display = 'none';
+      document.getElementById('jsonView').style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
